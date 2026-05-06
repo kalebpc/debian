@@ -74,8 +74,7 @@ function user_verify () {
 }
 
 function create_file () {
-	local tmp="$(basename "$NAME")"
-	cat <<EOF > $DEST
+	cat <<EOF > "$1"
 #! /usr/bin/env bash
 
 ######################################################
@@ -126,9 +125,8 @@ function main () {
 		if [ -f "$DEST" ]; then
 			if $(user_prompt "'$DEST' already exists! Do you want to overwrite it?"); then create_file; else exit 1; fi
 		else
-			create_file
+			create_file "$DEST"
 		fi
 	fi
 }
 main "$@"
-
