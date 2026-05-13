@@ -48,12 +48,16 @@ for dir in "${BACKUPDIRS[@]}"; do
 	#echo "dir: '$dir'"; continue #testing
 	source="${BACKUPDIRQUALIFIER}/${dir}/"
 	dest="${BACKUPPATH}/${dir}"
-	! [ -f "$LOGFILE" ] && { [ -d $(dirname "$LOGFILE") ] && mkdir -p $(dirname "$LOGFILE"); touch "$LOGFILE"; [ $? -ne 0 ] && { printf "Failed creating log file.\n\nExit: '%d'\n\n" $?; exit 1; }; }
+	if ! [ -f "$LOGFILE" ]; then
+		if ! [ -d $(dirname "$LOGFILE") ]; then
+			mkdir -p $(dirname "$LOGFILE")
+			> "$LOGFILE" || { printf "Failed creating log file.\n\nExit: '%d'\n\n" $?; exit 1; }
+		fi
+	fi
 	! [ -d "$dest" ] && mkdir -p "$dest"
-	if [ -d "$dest" ]; then
-		[ -d "$source" ] && { rsync -ruPavh "$source" "$dest" --log-file="$LOGFILE"; continue; } || printf "System could not locate '%s'.\n" "$source"
+	if [ -d "$source" ] && [ -d "$dest" ]; then
+		rsync -ruPavh --delete --backup-dir="$BACKUPDRIVE/backup-deleted/$(date "+%Y_%m_%d-(%H-00)")" "$source" "$dest" --log-file="$LOGFILE"
 	else
-		printf "System could not locate '%s'.\n" "$dest"
+		printf "System could not locate '%s' and/or '%s'.\n" "$source" "$dest"
 	fi
 done
-
