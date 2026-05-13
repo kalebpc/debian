@@ -79,7 +79,7 @@ function create_file () {
 
 ######################################################
 ######################################################
-# SCRIPT: $tmp
+# SCRIPT: $NAME
 # PURPOSE: $PURPOSE
 # AUTHOR: https://github.com/kalebpc
 # VERSION: 1.0.0
